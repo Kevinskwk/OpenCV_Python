@@ -7,17 +7,20 @@ import glob
 
 
 class Data_augmentation:
-    def __init__(self, path, image_name, txt_name):
+    def __init__(self, img_path, txt_path, image_name, txt_name):
         '''
         Import image
-        :param path: Path to the image
+        :param img_path: Path to the image
+        :param txt_path: Path to the label
         :param image_name: image name
+        :param txt_name: label name
         '''
-        self.path = path
+        self.img_path = img_path
+        self.txt_path = txt_path
         self.name = image_name
-        print(path + image_name)
-        self.image = cv.imread(path+image_name)
-        with open(path+txt_name, 'r+') as f:
+        print(img_path + image_name)
+        self.image = cv.imread(img_path+image_name)
+        with open(txt_path+txt_name, 'r+') as f:
             read_data = f.read()
         self.txt = read_data
 
@@ -97,11 +100,11 @@ class Data_augmentation:
             y = float(line[2])
             if hflip or vflip:
                 if hflip and vflip:
-                    x, y = -x, -y
+                    x, y = 1.0-x, 1.0-y
                 elif vflip:
-                    y = -y
+                    y = 1.0-y
                 else:
-                    x = -x  
+                    x = 1.0-x  
             string = '%s %s %s %s %s\n' % (line[0], x, y, line[3], line[4])
             txt_out += string
         return image, txt_out
@@ -122,6 +125,7 @@ class Data_augmentation:
             txt_out += string
         return image, txt_out 
     
+    # Working in progress
     '''
     def general_affine_trans(self, image, txt, p_out=[[50,100],[200,50],[100,200]]):
         
@@ -143,7 +147,9 @@ class Data_augmentation:
         height = (((p_out[2][0]-p_out[0][0])**2+(p_out[2][1]-p_out[0][1])**2)**0.5)*2/h
         string = '%s %s %s %s %s' % (data[0], x, y, width, height)
         return image, string
-    
+    '''
+    # Working in progress
+    '''
     def perspective_trans(self, image, p_in=[[56,65],[368,52],[28,387],[389,390]], p_out=[[0,0],[300,0],[0,300],[300,300]]):
         
         # Perspective_transformation
@@ -260,9 +266,12 @@ class Data_augmentation:
     
 # main
         
-PATH = 'image/'
-img_names = [f[len(PATH):] for f in glob.glob(PATH + '*.jpg')]
+img_PATH = 'image/'
+txt_PATH = 'label/'
+save_PATH = 'image_aug/'
+
+img_names = [f[len(img_PATH):] for f in glob.glob(img_PATH + '*.jpg')]
 for i in range(len(img_names)):
     txt_names = img_names[i][:len(img_names[i])-4]+'.txt'
-    image_i = Data_augmentation(PATH, img_names[i], txt_names)
-    image_i.image_augment('image_aug/')
+    image_i = Data_augmentation(img_PATH, txt_PATH, img_names[i], txt_names)
+    image_i.image_augment(save_PATH)
