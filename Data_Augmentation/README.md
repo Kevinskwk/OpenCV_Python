@@ -11,5 +11,4 @@
 ## TO DO
 
 - Finish the general_affine_transformation and perspective_transformation
-- Separate image files and label files
 - Currently I'm using the labelling script by AlexeyAB, I'll try to make one myself
